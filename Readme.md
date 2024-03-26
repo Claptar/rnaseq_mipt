@@ -92,7 +92,7 @@ $ bash scripts/qs_script.sh
 
 - *Результаты*
     
-    [multiqc.html](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/multiqc.html)
+    [multiqc.html](figures/multiqc.html)
     
 
 # Картирование
@@ -182,7 +182,7 @@ $ conda install samtools
     
     Документация: [ссылка](https://htseq.readthedocs.io/en/latest/htseqcount.html)
     
-    ![Untitled](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled.png)
+    ![Untitled](figures/Untitled.png)
     
 
 Напишем скрипт. Положим отсортированые `.bam` файлы и их индексы в отдельную папку файлы в отдельную папку.
@@ -252,7 +252,7 @@ $ bash scripts/kallisto_quantify.sh
 
 - Результаты
     
-    [multiqcfinal.html](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/multiqcfinal.html)
+    [multiqcfinal.html](figures/multiqcfinal.html)
     
 
 # Alignment QC
@@ -312,7 +312,7 @@ $ bash scripts/create_bed.py
 
 - *Результат*
     
-    [hk_genes_ensembl.bed](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/hk_genes_ensembl.bed)
+    [hk_genes_ensembl.bed](figures/hk_genes_ensembl.bed)
     
 
 Теперь запустим выполнение функции `geneBody_coverage`, используя наш кастомный  `.bed` файл для генов домашнего хозяйства.
@@ -324,7 +324,7 @@ $ geneBody_coverage.py -r references/hk_genes_ensembl.bed -i sortedbam -o RSeQCr
 
 - *Результат*
     
-    [.geneBodyCoverage.curves.pdf](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/.geneBodyCoverage.curves.pdf)
+    [.geneBodyCoverage.curves.pdf](figures/.geneBodyCoverage.curves.pdf)
     
 
 Остальные команды будем запускать c помощью скрипта используя `.bed` файл всего генома.
@@ -359,23 +359,23 @@ $ bash rseqc_script.sh
     
     Некоторые профили не подтягиваются в multiqc, поэтому я нарисовал их при помощи питона
     
-    ![clipping profile](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%201.png)
+    ![clipping profile](figures/Untitled%201.png)
     
     clipping profile
     
-    ![delition progile](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%202.png)
+    ![delition progile](figures/Untitled%202.png)
     
     delition progile
     
-    ![insertion profile](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%203.png)
+    ![insertion profile](figures/Untitled%203.png)
     
     insertion profile
     
-    ![duplication profile](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%204.png)
+    ![duplication profile](figures/Untitled%204.png)
     
     duplication profile
     
-    ![mismatch profile](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%205.png)
+    ![mismatch profile](figures/Untitled%205.png)
     
     mismatch profile
     
@@ -388,7 +388,7 @@ $ multiqc . -f -d -dd 2 --outdir qc --filename multirseqc.html
 
 - *Результат*
     
-    [multirseqc.html](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/multirseqc.html)
+    [multirseqc.html](figures/multirseqc.html)
     
 
 # Визуализация
@@ -403,20 +403,20 @@ track type=bam name="SRR3414630" bigDataUrl=https://figshare.com/ndownloader/fil
 
 - Выглядит оно как-то так
     
-    ![Untitled](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%206.png)
+    ![Untitled](figures/Untitled%206.png)
     
 
 Получилось что-то такое. Но открывается не для всех хромосом (видимо потому что нужно было выравнивать на геном от ucsc).
 
-![Untitled](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%207.png)
+![Untitled](figures/Untitled%207.png)
 
 ## Persephone
 
 Я загрузил genome.fa, genome.gtf и свой .bam  файл на сайте [Persephone](https://web.persephonesoft.com/). И получилось что-то такое. Всё делается очень просто и легко, советую.
 
-![Untitled](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%208.png)
+![Untitled](figures/Untitled%208.png)
 
-![Untitled](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/Untitled%209.png)
+![Untitled](figures/Untitled%209.png)
 
 # Квантификация
 
@@ -460,7 +460,7 @@ $ multiqc . -f -d -dd 2 --outdir qc --filename multiqcfinal.html
 
 - *Результат*
     
-    [multiqcfinal.html](RNA-seq%202cabfaf5caa9455f98df9839ec0ceb01/multiqcfinal.html)
+    [multiqcfinal.html](figures/multiqcfinal.html)
     
 
 # Дифференциальная экспрессия
