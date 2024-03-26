@@ -1,0 +1,8 @@
+fastq_files
+references
+qc/*.zip
+qc/multiqc_data
+qc/multirseqc_data
+qc/multiqcfinal_data
+hisatOutput
+sortedbam

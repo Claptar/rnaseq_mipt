@@ -1,0 +1,13 @@
+{
+	"n_targets": 115911,
+	"n_bootstraps": 0,
+	"n_processed": 20956475,
+	"n_pseudoaligned": 18751623,
+	"n_unique": 5774558,
+	"p_pseudoaligned": 89.5,
+	"p_unique": 27.6,
+	"kallisto_version": "0.48.0",
+	"index_version": 10,
+	"start_time": "Tue Mar 26 16:58:58 2024",
+	"call": "kallisto quant -i references/musGRCm39_kallisto -o kallistoOutput/SRR3414635 --single -l 180 -s 20.0 -t 8 fastq_files/SRR3414635.fastq.gz"
+}
