@@ -1,9 +1,10 @@
 # RNA-seq
 
-
 # Введение
 
 Целью данного задания является сравнение RNA-seq данных перепрограммированных и неперепрограммированных (контрольных) мышиных эмбриональных фибробластов (MEFs) и нахождение генов, которые наиболее сильно изменяют свою экспрессию в этом процессе. В качестве дополнительного задания предлагается изучить основные. 
+
+[https://github.com/Claptar/rnaseq_mipt](https://github.com/Claptar/rnaseq_mipt)
 
 # Подготовим рабочее пространство
 
@@ -25,7 +26,7 @@ $ mkdir qc # дирректория с отчётами о качестве на
 
 # Скачивание файлов
 
-Скачаем данные PRJNA836496 при помощи [SRA Explorer](https://sra-explorer.info/#). Для этого создадим скрипт `load_fastq.sh` в дирректории `scripts`. Добавим `$1` перед названием файла чтобы указать необходимую нам директорию.
+Скачаем данные **GSE80550** **при помощи [SRA Explorer](https://sra-explorer.info/#). Для этого создадим скрипт `load_fastq.sh` в дирректории `scripts`. Добавим `$1` перед названием файла чтобы указать необходимую нам директорию.
 
 ```bash
 #!/usr/bin/env bash
@@ -357,7 +358,7 @@ $ bash rseqc_script.sh
 
 - Результат
     
-    Некоторые профили не подтягиваются в multiqc, поэтому я нарисовал их при помощи питона
+    Некоторые профили не подтягиваются в multiqc, поэтому я нарисовал самостоятельно. Код можно найти **тут**
     
     ![clipping profile](figures/Untitled%201.png)
     
@@ -465,6 +466,92 @@ $ multiqc . -f -d -dd 2 --outdir qc --filename multiqcfinal.html
 
 # Дифференциальная экспрессия
 
-## Нормализация
+## Найдём RPKM
+
+Для подсчёта RPKM нужно достать длины всех генов. Это можно сделать используя наш .gtf файл. Дальше всё достаточно просто. Нужно нормализовать экспрессию каждого гена на длинну транскрипта и на величину общей экспрессии в образце. Ноутбук со всеми вычислениями можно найти [тут](https://github.com/Claptar/rnaseq_mipt/blob/main/notebooks/calculate_rpkm.ipynb).
+
+[rnaseq_mipt/notebooks/calculate_rpkm.ipynb at main · Claptar/rnaseq_mipt](https://github.com/Claptar/rnaseq_mipt/blob/main/notebooks/calculate_rpkm.ipynb)
+
+$$
+RPKM_i = \frac{count_i / length_i}{\sum_jcount_j} * 10^9
+$$
+
+<aside>
+💡 Для дальнейшего анализа я взял только protein_coding гены. Для этого можно воспользоваться табличкой `references/biomart_export.txt` скаченной ранее c сайта [Biomart](https://www.ensembl.org/info/data/biomart/index.html)
+
+</aside>
+
+Для подсчёта RPKM я выбрал ген WNT4.
+
+- Описание WNT4 с [Genecards](https://www.genecards.org/cgi-bin/carddisp.pl?gene=WNT4)
+    
+    > *The WNT gene family consists of structurally related genes which encode secreted signaling proteins. These proteins have been implicated in oncogenesis and in several developmental processes, including regulation of cell fate and patterning during embryogenesis. This gene is a member of the WNT gene family, and is the first signaling molecule shown to influence the sex-determination cascade. It encodes a protein which shows 98% amino acid identity to the Wnt4 protein of mouse and rat. This gene and a nuclear receptor known to antagonize the testis-determining factor play a concerted role in both the control of female development and the prevention of testes formation. This gene and another two family members, WNT2 and WNT7B, may be associated with abnormal proliferation in breast tissue. Mutations in this gene can result in Rokitansky-Kuster-Hauser syndrome and in SERKAL syndrome. [provided by RefSeq, Jul 2008]*
+    > 
+
+![Untitled](figures/Untitled%2010.png)
 
 ## Сравнение экспрессий
+
+Сперва необходимо определить гены которые дифференциально экспрессируются между двумя состояниями. Сделаем это при помощи пакета [EdgeR](https://www.bioconductor.org/packages/release/bioc/html/edgeR.html). Ссылка на ноутбук:
+
+[Google Colaboratory](https://colab.research.google.com/github/Claptar/rnaseq_mipt/blob/main/notebooks/differential_expression.ipynb)
+
+В результате у нас получилось:
+
+|  | Gene number |
+| --- | --- |
+| Upregulated | 4256 |
+| Not significant | 5185 |
+| Downregulated | 4040 |
+
+## Анализ результатов
+
+Теперь проанализируем полученные результаты. Для этого создадим новое окружение:
+
+```bash
+$ conda create -n py_env matplotlib numpy pandas seaborn gseapy tqdm
+```
+
+Весь код можно найти тут:
+
+[rnaseq_mipt/notebooks/de_results.ipynb at main · Claptar/rnaseq_mipt](https://github.com/Claptar/rnaseq_mipt/blob/main/notebooks/de_results.ipynb)
+
+## **Сравнение нормализаций**
+
+Видим, что распределения каунтов и TMM похожи между собой и отличаются от RPKM. Это из-за того, что RPKM учитывает длинну гена и соответсвенно занижает экспрессию для длинных генов 
+
+![Untitled](figures/Untitled%2011.png)
+
+### **Экспрессия WNT4**
+
+По результатам анализа деференциальной экспрессии экспрессия гена WNT4 значимо различается между группами
+
+|  | logFC | logCPM | LR | PValue | FDR |
+| --- | --- | --- | --- | --- | --- |
+| Wnt4 | -0.747517 | 3.967487 | 14.580468 | 0.000134 | 0.000334 |
+
+Посмотрим на экспрессию для каждой из групп
+
+![Untitled](figures/Untitled%2012.png)
+
+### GSA
+
+Сделаем GSA для баз данных GO, KEGG и MSigDB. Для этого воспользуемся API сайта [enrichr](https://maayanlab.cloud/Enrichr/#libraries). Сравнивать будем отдельно *up-regulated* и *down-regulated* гены
+
+GSA для базы данных GO
+
+![Untitled](figures/Untitled%2013.png)
+
+GSA для базы данных KEGG
+
+![Untitled](figures/Untitled%2014.png)
+
+GSA для базы данных MSigDB. Здесь видим, что **E2F Targets** у нас значим для апрегулированых генов. Возможно в задании была построена неправильная картинка
+
+![Untitled](figures/Untitled%2015.png)
+
+### GSEA
+
+Сделаем GSEA для базы данных MSigDB. Для этого нам нужно получить ранжированых список генов. Где чем выше ранг (чем ближе к началу). На этих данных запускаем GSEA при помощи функции [gseapy.prerank](https://gseapy.readthedocs.io/en/latest/gseapy_example.html#Prerank-example). В результате видим, что **E2F Targets** снова апрегулирован.
+
+![Untitled](figures/Untitled%2016.png)
